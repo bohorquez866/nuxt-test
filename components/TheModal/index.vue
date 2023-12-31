@@ -20,25 +20,40 @@ const handleSubmit = () => {
   modalStore.toggleIsOpen();
 };
 
+const handleToggleModal = (e: Event) => {
+  const className = (e.target as HTMLElement).className;
+  const hasClasses = ["modal-overlay", "close"].includes(className);
+  e.stopPropagation();
+
+  if (hasClasses) {
+    modalStore.toggleIsOpen();
+  }
+};
+
 const Modal = () => (
-  <section class="modal-overlay">
+  <section class="modal-overlay" onClick={handleToggleModal}>
     <div class="modal">
       <section>
         <input
           class={"input"}
           type="text"
           value={taskText.value}
-          onChange={updateText}
+          onInput={updateText}
           placeholder="type your task"
         />
 
-        <button class={"btn"} onClick={handleSubmit}>
-          add
+        <button
+          disabled={!taskText.value.length}
+          onClick={handleSubmit}
+          class={"btn"}
+        >
+          <span>Add Task</span>
         </button>
       </section>
-    </div>
-    <div class="close" onClick={modalStore.toggleIsOpen}>
-      close
+
+      <div class="close" onClick={handleToggleModal}>
+        <Icon name="material-symbols:close" />
+      </div>
     </div>
   </section>
 );
@@ -51,7 +66,7 @@ const Modal = () => (
 </template>
 
 <style lang="scss">
-$green: #0df98b;
+@import "../../assets/scss/vars.scss";
 
 .modal-overlay {
   position: fixed;
@@ -62,7 +77,7 @@ $green: #0df98b;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000000da;
+  background-color: #00000088;
 }
 
 .modal {
@@ -75,6 +90,7 @@ $green: #0df98b;
   margin-top: 10%;
   padding: 60px 20px;
   border-radius: 20px;
+  position: relative;
 
   & .input {
     border: 1px solid $green;
@@ -84,8 +100,14 @@ $green: #0df98b;
     width: 100%;
   }
   & .close {
-    margin: 10% 0 0 16px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: black;
     cursor: pointer;
+    & svg {
+      pointer-events: none;
+    }
   }
 
   & h6 {
@@ -108,5 +130,8 @@ $green: #0df98b;
   font-size: 14px;
   border-radius: 16px;
   margin-top: 50px;
+  &:disabled {
+    background-color: #5c5858;
+  }
 }
 </style>
